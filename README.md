@@ -54,7 +54,7 @@ This web application leverages satellite imagery to track and visualize the impa
 
 After running the app, users can interact with the web interface to view satellite data, explore various indices, and analyze salinity effects on agricultural land in the region. The application enables users to identify potential risk areas and make informed decisions to protect soil fertility.
 
-## Limitations and Future
+## Limitations and Future Versions
 Right now the app is only available locally and it will need to be deployed for maximum impact. 
 
 The current version does not allow date selection for satellite data visualization. All data is pre-fetched for specific dates. 
