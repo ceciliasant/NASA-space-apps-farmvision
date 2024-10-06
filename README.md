@@ -19,18 +19,25 @@ This web application leverages satellite imagery to track and visualize the impa
 
 1. **Clone the repository**:
    git clone <repository-url>
+   
    cd <repository-folder>
 
 2. **Create a virtual environment**:
    python3 -m venv env
+   
    source env/bin/activate  # On Windows: env\Scripts\activate
 
-3. **Install the required dependencies**:
+4. **Install the required dependencies**:
    pip install -r requirements.txt
 
-4. **Running the Application**:
+5. **Fetch the required data**
+   python down.py.
+   
+6. **Running the Application**:
    Start the FastAPI server:
+   
    uvicorn serve:app --reload
+   
    Access the web app locally.
 
 
@@ -41,6 +48,9 @@ After running the app, users can interact with the web interface to view satelli
 ## Contributors
 
 André Dora
+
 Cecília Santos
-Raquel Vinagra
+
+Raquel Vinagre
+
 Rhania Rolo
