@@ -1,4 +1,4 @@
-# NASA Space Apps Challenge
+# NASA Space Apps Challenge - Community Mapping
 
 This web application leverages satellite imagery to track and visualize the impact of salinity on agricultural land in the Baixo Vouga Lagunar region of Aveiro. The platform is designed to help researchers, students, and local farmers identify high-risk areas, enabling them to take preventative measures to protect fertile soil and ensure sustainable land use.
 
