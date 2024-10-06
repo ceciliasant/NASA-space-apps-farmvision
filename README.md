@@ -35,7 +35,11 @@ This web application leverages satellite imagery to track and visualize the impa
 
 7. **Fetch the required data**:
 
-   python down.py.
+   python down.py
+
+   We will need to be logged into your account in Copernicus.
+
+   This step might take a bit.
    
 9. **Running the Application**:
 
@@ -49,6 +53,13 @@ This web application leverages satellite imagery to track and visualize the impa
 ## Usage
 
 After running the app, users can interact with the web interface to view satellite data, explore various indices, and analyze salinity effects on agricultural land in the region. The application enables users to identify potential risk areas and make informed decisions to protect soil fertility.
+
+## Limitations and Future
+Right now the app is only available locally and it will need to be deployed for maximum impact. 
+
+The current version does not allow date selection for satellite data visualization. All data is pre-fetched for specific dates. 
+
+In next versions we will have to upgrade the app to allow users to select specific dates and implement a cache system to store previously fetched satellite data, improving performance and reducing repeated API calls
 
 ## Contributors
 
