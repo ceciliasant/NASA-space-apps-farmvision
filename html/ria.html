@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Community Mapping</title>
+
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Bootstrap Icons (optional) -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<!-- Leaflet CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+	<style>
+		/* General reset */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			font-family: 'Poppins', sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background-color: #f4f4f4;
+		}
+
+		h1 {
+			font-size: 2rem;
+			margin-bottom: 20px;
+			color: #333;
+			text-align: center;
+			margin-top: 80px;
+		}
+
+		#map-container {
+			display: flex;
+			align-items: flex-start;
+			justify-content: center;
+			width: 100%;
+			max-width: 1200px;
+			padding: 20px;
+		}
+
+		#map {
+			width: 800px;
+			height: 500px;
+			max-width: 100%;
+			border-radius: 10px;
+			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+			margin-bottom: 10px;
+		}
+
+		.leaflet-container {
+			width: 100%;
+			height: 100%;
+		}
+
+		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255, 255, 255, 0.9);
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+			border-radius: 5px;
+		}
+
+		.info h4 {
+			margin: 0 0 5px;
+			color: #555;
+		}
+
+		.legend {
+			text-align: left;
+			line-height: 18px;
+			color: #555;
+			background-color: white;
+			padding: 10px;
+			border-radius: 5px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+		}
+
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.7;
+		}
+
+		.prop {
+			font-size: 1.2rem;
+			margin: 10px 0;
+			padding: 10px;
+			display: flex;
+			align-items: flex-start;
+			justify-content: center;
+		}
+
+		#filter-container {
+			margin-left: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.info-card {
+			margin-top: 130px;
+			width: 300px;
+			padding: 20px;
+			background: white;
+			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+			border-radius: 10px;
+		}
+
+		@media (max-width: 768px) {
+			#map-container {
+				flex-direction: column;
+				align-items: center;
+			}
+
+			#map {
+				width: 100%;
+				height: 400px;
+			}
+
+			#filter-container {
+				margin-left: 0;
+				/* margin-top: 10px; */
+				align-items: center;
+			}
+
+			h1 {
+				font-size: 1.5rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Bootstrap Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="ria.html">Community Mapping</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="#">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="about.html">About</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<h1>Saline Intrusion Risk Zones in Baixo Vouga Lagunar, Aveiro</h1>
+
+	<div id="map-container">
+		<!-- Map container -->
+		<div id="map"></div>
+
+		<!-- Filter and Info Card container -->
+		<div id="filter-container">
+			<!-- Filter button -->
+			<div class="prop">
+				<div class="btn-group">
+					<button type="button" class="btn btn-primary text-white dropdown-toggle" data-bs-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false">
+						Select Indice
+					</button>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="#" onclick="updateProp('NDVI')">Vegetation Health</a>
+						<a class="dropdown-item" href="#" onclick="updateProp('NDWI')">Water Content</a>
+						<a class="dropdown-item" href="#" onclick="updateProp('NDSI')">Salinity Risk</a>
+						<a class="dropdown-item" href="#" onclick="updateProp('SI9')">Salinity</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Info Card -->
+			<div id="info-card" class="info-card">
+				<h4 id="index-title">Index Information</h4>
+				<p id="index-description">Select an index from the dropdown to see more information here.</p>
+			</div>
+		</div>
+		<!-- Add a time slider in the filter container -->
+		<div id="time-slider-container" class="prop">
+    		<label for="time-slider">Select Time:</label>
+    		<input type="range" id="time-slider" min="0" max="3" step="1" value="0" oninput="updateTime(this.value)">
+	</div>
+
+	</div>
+
+
+
+	<script type="text/javascript">
+		var geojson;
+		var propToDisplay = 'NDVI';
+
+		// Define the bounding box coordinates
+		const boundingBox = {
+			south: 40.67313,
+			north: 40.751945,
+			west: -8.631083,
+			east: -8.58055
+		};
+
+		// Calculate the center of the bounding box
+		const center = [
+			(boundingBox.north + boundingBox.south) / 2,
+			(boundingBox.east + boundingBox.west) / 2
+		];
+
+		// Calculate the zoom level based on the bounding box
+		const zoom = 14;
+
+		fetch('/ria.json').then(blob => blob.json()).then(data => plot(data));
+
+		const map = L.map('map').setView(center, zoom);
+
+		const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			maxZoom: 19,
+			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+		}).addTo(map);
+
+		// Control that shows state info on hover
+		const info = L.control();
+
+		info.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info');
+			this.update();
+			return this._div;
+		};
+
+		info.update = function (props) {
+			const contents = props ? `<b>${props.Id}</b><br />${propToDisplay}: ${props[propToDisplay].toFixed(4)}` : 'Hover over a canal';
+			this._div.innerHTML = `<h4>${propToDisplay}</h4>${contents}`;
+		};
+
+		info.addTo(map);
+
+		// Get color depending on the value
+		function getColor(d) {
+			return d > 0.7 ? '#FCE51E' :      // Light Yellow
+           d > 0.6 ? '#49BE54' :      // Green
+           d > 0.5 ? '#209473' :      // Dark Green
+           d > 0.3 ? '#22687B' :      // Teal
+           d > 0.2 ? '#2D3E78' :      // Blue
+           d > 0.1 ? '#37125E' :      // Dark Blue
+        //    d > 0.0 ? '#1C161E' :      // Almost Black
+           d > -0.1 ? '#9B1B29' :     // Light Red
+           d > -0.3 ? '#D95E66' :     // Medium Red
+           d > -0.5 ? '#FF7F50' :     // Dark Red
+           d > -0.7 ? '#FF4500' :     // Bright Red
+           '#FF0000';                 // Red (for values below -0.7)
+		}
+
+		function style(feature) {
+			return {
+				weight: 2,
+				opacity: 1,
+				color: 'white',
+				dashArray: '3',
+				fillOpacity: 0.7,
+				fillColor: getColor(feature.properties[propToDisplay])
+			};
+		}
+
+		function highlightFeature(e) {
+			const layer = e.target;
+
+			layer.setStyle({
+				weight: 5,
+				color: '#666',
+				dashArray: '',
+				fillOpacity: 0.7
+			});
+
+			layer.bringToFront();
+
+			info.update(layer.feature.properties);
+		}
+
+		function plot(riaData) {
+			geojson = L.geoJson(riaData, {
+				style: style,
+				onEachFeature: function onEachFeature(feature, layer) {
+					layer.on({
+						mouseover: highlightFeature,
+						mouseout: resetHighlight,
+					});
+				}
+			}).addTo(map);
+
+			const legend = L.control({ position: 'bottomright' });
+
+			legend.onAdd = function (map) {
+				const div = L.DomUtil.create('div', 'info legend'),
+					grades = [-0.7, -0.5, -0.3, -0.1, 0, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7],
+					labels = [];
+
+				// Loop through our density intervals and generate a label with a colored square for each interval
+				for (let i = 0; i < grades.length; i++) {
+					div.innerHTML +=
+						'<i style="background:' + getColor(grades[i] + 0.01) + '"></i> ' +
+						grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+				}
+
+				return div;
+			};
+
+			legend.addTo(map);
+		}
+
+		function resetHighlight(e) {
+			geojson.resetStyle(e.target);
+			info.update();
+		}
+
+		function updateProp(property) {
+			propToDisplay = property;
+			geojson.setStyle(style);
+			updateInfoCard(property);
+		}
+
+		function updateInfoCard(property) {
+			const titles = {
+				'NDVI': 'Normalized Difference Vegetation Index (NDVI)',
+				'NDWI': 'Normalized Difference Water Index (NDWI)',
+				'NDSI': 'Normalized Difference Water Index (NDSI)',
+				'SI9': 'Spectral Index 9 (SI9)'
+			};
+
+		
+
+			const descriptions = {
+				'NDVI': 'NDVI is used to analyze vegetation health by comparing the difference between the near-infrared and visible red light reflected by plants. Higher values mean healthier vegetation.',
+				'NDWI': 'NDWI is used to highlight water bodies and assess changes in water content over time. Higher values typically indicate more water or moisture content.',
+				'NDSI': 'NDSI highlights areas that may be at risk of soil salinizationby contrasting the reflectance in visible and near-infrared bands.',
+				'SI9': 'SI9 helps detect salt accumulation in the soil'};
+
+			document.getElementById('index-title').textContent = titles[property];
+			document.getElementById('index-description').textContent = descriptions[property];
+		}
+
+	</script>
+
+	<!-- Bootstrap JS and Popper.js -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
